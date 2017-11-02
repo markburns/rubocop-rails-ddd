@@ -49,7 +49,12 @@ module RuboCop
         def_node_search :const_described?,  '(send _ :describe (const ...) ...)'
         def_node_search :routing_metadata?, '(pair (sym :type) (sym :routing))'
 
-        def on_top_level_describe(node, args)
+        require 'byebug'
+        def on_send(node)
+          return unless top_level_describe?(node)
+
+          _receiver, _method_name, *args = *node
+
           return unless const_described?(node) && single_top_level_describe?
           return if routing_spec?(args)
 

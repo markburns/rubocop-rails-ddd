@@ -8,15 +8,6 @@ module RuboCop
         (block $(send _ :describe $(const ...)) (args) $_)
       PATTERN
 
-      def on_send(node)
-        return unless respond_to?(:on_top_level_describe)
-        return unless top_level_describe?(node)
-
-        _receiver, _method_name, *args = *node
-
-        on_top_level_describe(node, args)
-      end
-
       private
 
       def top_level_describe?(node)

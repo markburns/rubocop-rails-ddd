@@ -13,8 +13,6 @@ require 'rubocop/rspec/language'
 require 'rubocop/rspec/language/node_pattern'
 require 'rubocop/rspec/concept'
 require 'rubocop/rspec/example_group'
-require 'rubocop/rspec/example'
-require 'rubocop/rspec/hook'
 
 RuboCop::RSpec::Inject.defaults!
 

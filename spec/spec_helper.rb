@@ -1,6 +1,7 @@
 require 'rubocop'
-
+require 'byebug'
 require 'rubocop/rspec/support'
+
 
 if ENV['CI']
   require 'simplecov'
@@ -10,6 +11,7 @@ end
 module SpecHelper
   ROOT = Pathname.new(__dir__).parent.freeze
 end
+
 
 spec_helper_glob = File.expand_path('{support,shared}/*.rb', __dir__)
 Dir.glob(spec_helper_glob).map(&method(:require))
@@ -41,4 +43,4 @@ end
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 
-require 'rubocop-rspec'
+require 'rubocop-rails_ddd'

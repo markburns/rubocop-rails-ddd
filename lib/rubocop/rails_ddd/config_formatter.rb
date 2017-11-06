@@ -1,7 +1,7 @@
 require 'yaml'
 
 module RuboCop
-  module RSpec
+  module RailsDdd
     # Builds a YAML config file from two config hashes
     class ConfigFormatter
       NAMESPACES = /^(#{Regexp.union('RSpec', 'Capybara', 'FactoryGirl')})/

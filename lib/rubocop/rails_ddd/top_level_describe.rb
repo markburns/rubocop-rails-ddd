@@ -1,5 +1,5 @@
 module RuboCop
-  module RSpec
+  module RailsDdd
     # Helper methods for top level describe cops
     module TopLevelDescribe
       extend NodePattern::Macros

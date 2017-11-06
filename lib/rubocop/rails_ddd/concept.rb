@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 module RuboCop
-  module RSpec
+  module RailsDdd
     # Wrapper for RSpec DSL methods
     class Concept
       include Language
-      include Language::NodePattern
       extend NodePattern::Macros
 
       def initialize(node)

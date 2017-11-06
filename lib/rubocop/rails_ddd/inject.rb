@@ -1,5 +1,5 @@
 module RuboCop
-  module RSpec
+  module RailsDdd
     # Because RuboCop doesn't yet support plugins, we have to monkey patch in a
     # bit of our configuration.
     module Inject

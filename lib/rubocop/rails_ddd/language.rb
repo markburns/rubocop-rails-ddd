@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RuboCop
-  module RSpec
+  module RailsDdd
     # RSpec public API methods that are commonly used in cops
     module Language
       # Set of method selectors

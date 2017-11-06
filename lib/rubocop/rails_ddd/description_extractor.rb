@@ -1,5 +1,5 @@
 module RuboCop
-  module RSpec
+  module RailsDdd
     # Extracts cop descriptions from YARD docstrings
     class DescriptionExtractor
       def initialize(yardocs)

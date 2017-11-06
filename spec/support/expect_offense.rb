@@ -5,7 +5,7 @@
 module ExpectOffense
   include RuboCop::RSpec::ExpectOffense
 
-  DEFAULT_FILENAME = 'example_spec.rb'.freeze
+  DEFAULT_FILENAME = 'example.rb'.freeze
 
   def expect_offense(source, filename = DEFAULT_FILENAME)
     super

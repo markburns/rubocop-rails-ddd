@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RuboCop
-  module RSpec
+  module RailsDdd
     # RSpec example wording rewriter
     class Wording
       SHOULDNT_PREFIX    = /\Ashould(?:n't| not)\b/i

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module RuboCop
-  module RSpec
+  module RailsDdd
     # Wrapper for RSpec example groups
     class ExampleGroup < Concept
       # @!method scope_change?(node)

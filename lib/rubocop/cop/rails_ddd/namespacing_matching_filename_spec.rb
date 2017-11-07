@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'parser/current'
 
 RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
   subject(:cop) { described_class.new(config) }
@@ -83,8 +84,6 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
 
     let(:source) { expected.gsub(/^\s*\^.*$/, "") }
-
-      require 'parser/current'
 
     let(:node) do
       # example from http://www.rubydoc.info/gems/rubocop/RuboCop/AST/Builder
@@ -241,13 +240,13 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
             "::Something::This::That"
           ]
         end
-        end
       end
     end
+  end
 
-    context "with other constants in the file" do
-      let(:expected) do
-        <<-OUTPUT
+  context "with other constants in the file" do
+    let(:expected) do
+      <<-OUTPUT
         module SomeFile
           module AnotherConstant
             class YetAnotherConstant
@@ -257,25 +256,11 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
             end
           end
         end
-        OUTPUT
-      end
-
-      it do
-        expect_no_offenses(expected, 'app/concepts/some_file/another_constant/yet_another_constant.rb')
-      end
+      OUTPUT
     end
 
-    describe described_class::ConstantNameFinder do
-      it do
-        expect(described_class.for("SomeFile")).to eq ["::SomeFile"]
-        expected_results = [
-          "::SomeFile",
-          "::SomeFile::SomeNamespace",
-          "::SomeFile::SomeNamespace::AnotherNamespace",
-          "::SomeFile::SomeNamespace::AnotherNamespace::FinalConstant"
-        ]
-
-        expect(described_class.for("SomeFile::SomeNamespace::AnotherNamespace::FinalConstant")).to eq expected_results
-      end
+    it do
+      expect_no_offenses(expected, 'app/concepts/some_file/another_constant/yet_another_constant.rb')
     end
   end
+end

@@ -3,7 +3,6 @@
 module RuboCop
   module Cop
     module RailsDdd
-
       # Checks that classes are namespaced.
       #
       # Checks the path of the file and enforces that it reflects the

@@ -60,14 +60,7 @@ module RuboCop
         end
 
         module NestedConstantName
-          def self.for(node: node, namespace: nil)
-            return nil unless node.is_a? RuboCop::AST::Node
-            return nil if node.type == :const
-
-            infer_namespace(node)
-          end
-
-          def self.infer_namespace(node, const_chain: [])
+          def self.for(node:, const_chain: [])
             return "::" + const_chain.compact.reverse.join("::") if node.nil?
 
             const_name = if node.class_type? || node.module_type?
@@ -76,7 +69,7 @@ module RuboCop
 
             const_chain << const_name
 
-            infer_namespace(node.parent, const_chain: const_chain)
+            self.for(node: node.parent, const_chain: const_chain)
           end
         end
 
@@ -115,7 +108,7 @@ module RuboCop
           end
 
           def self.valid?(const_name, path)
-            expected_const_name(path).starts_with? const_name
+            expected_const_name(path).starts_with?(const_name)
           end
 
           def self.expected_const_name(path)

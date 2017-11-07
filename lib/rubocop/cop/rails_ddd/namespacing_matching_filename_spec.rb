@@ -45,6 +45,39 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
+  context "invalid nested module" do
+    let(:expected) do
+      <<-OUTPUT
+        module SomeFile
+          module Wrong
+          ^^^^^^^^^^^^ Incorrect constant name for app/concepts/some_file/another_constant.rb
+          end
+        end
+      OUTPUT
+    end
+
+    it do
+      expect_offense(expected, 'app/concepts/some_file/another_constant.rb')
+    end
+  end
+
+  context "invalid nested module with valid module elsewhere" do
+    let(:expected) do
+      <<-OUTPUT
+        module SomeFile
+          class AnotherConstant
+          end
+
+          module Wrong
+          end
+        end
+      OUTPUT
+    end
+
+    it do
+      expect_no_offenses(expected, 'app/concepts/some_file/another_constant.rb')
+    end
+  end
   context "nested again" do
     let(:expected) do
       <<-OUTPUT
@@ -97,17 +130,17 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
 
     let(:path) { 'app/concepts/some_file/another_constant/yet_another_constant.rb' }
 
-    describe "#valid_constant_exists_in_file?" do
+    describe "#valid_constant_elsewhere?" do
       before do
         allow(cop).to receive(:path).and_return path
       end
 
       it do
-        expect(cop.valid_fully_qualified_constant_exists_in_file?(node)).to eq false
+        expect(cop.valid_constant_elsewhere?(node)).to eq false
       end
     end
 
-    describe described_class::ValidConstantPathDetermination do
+    describe described_class::ConstantPathDetermination do
       let(:valid) { described_class.valid?(const_name, path) }
 
       context "with a top level constant" do
@@ -167,8 +200,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
       end
     end
 
-    describe described_class::SingleConstantFinder do
-
+    describe described_class::NestedConstantName do
       context "with child class node" do
         let(:nested_node) { node.children.last.children.last }
         let(:constant) { described_class.for(node: nested_node) }
@@ -189,7 +221,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
       end
     end
 
-    describe described_class::ConstantFinder do
+    describe described_class::ConstantsFinder do
       let(:constants) { described_class.for(node: node) }
 
       it do

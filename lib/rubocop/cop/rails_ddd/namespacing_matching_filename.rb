@@ -25,8 +25,9 @@ module RuboCop
         def on_module(node)
           return unless concepts_folder?
 
-          constant_name = SingleConstantFinder.for(node: node)
-          return if ValidConstantPathDetermination.valid?(constant_name, path)
+          constant_name = NestedConstantName.for(node: node)
+          return if ConstantPathDetermination.valid?(constant_name, path)
+          return if valid_constant_elsewhere?(node)
 
           add_offense(node, location: :expression, message: message)
         end
@@ -34,14 +35,14 @@ module RuboCop
         def on_class(node)
           return unless concepts_folder?
 
-          return if valid_fully_qualified_constant_exists_in_file?(node)
+          return if valid_constant_elsewhere?(node)
 
           add_offense(node, location: :expression, message: message)
         end
 
-        def valid_fully_qualified_constant_exists_in_file?(node)
-          constants = ConstantFinder.for(node: node.ancestors.last)
-          constants.any?{|c| ValidConstantPathDetermination.valid_fully_qualified_constant?(c, path) }
+        def valid_constant_elsewhere?(node)
+          constants = ConstantsFinder.for(node: node.ancestors.last)
+          constants.any?{|c| ConstantPathDetermination.valid_fully_qualified_constant?(c, path) }
         end
 
         private
@@ -58,7 +59,7 @@ module RuboCop
           processed_source.path
         end
 
-        module SingleConstantFinder
+        module NestedConstantName
           def self.for(node: node, namespace: nil)
             return nil unless node.is_a? RuboCop::AST::Node
             return nil if node.type == :const
@@ -77,10 +78,9 @@ module RuboCop
 
             infer_namespace(node.parent, const_chain: const_chain)
           end
-
         end
 
-        module ConstantFinder
+        module ConstantsFinder
           def self.for(node: node, constants: [], namespace: "")
             return constants unless node.is_a? RuboCop::AST::Node
             return constants if node.type == :const
@@ -109,7 +109,7 @@ module RuboCop
           end
         end
 
-        module ValidConstantPathDetermination
+        module ConstantPathDetermination
           def self.valid_fully_qualified_constant?(const_name, path)
             expected_const_name(path) == const_name
           end

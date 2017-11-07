@@ -17,9 +17,7 @@ require 'rubocop/rails_ddd/example_group'
 RuboCop::RailsDdd::Inject.defaults!
 
 # cops
-require 'rubocop/cop/rails_ddd/namespacing_correct_constant.rb'
 require 'rubocop/cop/rails_ddd/namespacing_matching_filename.rb'
-require 'rubocop/cop/rails_ddd/namespacing_missing.rb'
 # We have to register our autocorrect incompatibilies in RuboCop's cops as well
 # so we do not hit infinite loops
 

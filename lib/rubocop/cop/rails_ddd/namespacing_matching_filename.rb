@@ -25,7 +25,8 @@ module RuboCop
         def on_module(node)
           return unless concepts_folder?
 
-          return if correct_module_name?(SingleConstantFinder.for node: node)
+          constant_name = SingleConstantFinder.for(node: node)
+          return if ValidConstantPathDetermination.valid?(constant_name, path)
 
           add_offense(node, location: :expression, message: message)
         end
@@ -44,10 +45,6 @@ module RuboCop
         end
 
         private
-
-        def correct_module_name?(constant_name)
-          ValidConstantPathDetermination.valid?(constant_name, path)
-        end
 
         def message
           "Incorrect constant name for #{path}".freeze
@@ -127,24 +124,6 @@ module RuboCop
               gsub(%r{app/concepts/}, "").
               gsub(%r{\.rb\z}, "").
               camelize
-          end
-        end
-
-        module ConstantNameFinder
-          def self.for(class_name)
-            # There is probably a prettier way to do this with some
-            # Enumerable method, but I can't think of it right now
-            levels = class_name.split("::")
-            length = levels.length
-            constants = []
-
-            length.times.each do |i|
-              constant_name = levels[0..i].join("::")
-              constant_name = "::#{constant_name}" unless constant_name.starts_with? '::'
-              constants.push constant_name
-            end
-
-            constants
           end
         end
       end

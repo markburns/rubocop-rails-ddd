@@ -39,7 +39,7 @@ module RuboCop
         end
 
         def valid_constant_elsewhere?(node)
-          constants = Helpers.find_constants_in(node: node.ancestors.last)
+          constants = find_constants_in(node: node.ancestors.last)
           constants.any? { |c| valid_fully_qualified_constant?(c, path) }
         end
 
@@ -48,12 +48,13 @@ module RuboCop
         def process(node)
           return unless concepts_folder?
 
-          constant_name = Helpers.nested_constant_name_for(node: node)
+          constant_name = nested_constant_name_for(node: node)
 
-          return if exact_constant? constant_name, path
-          return if valid_constant_elsewhere?(node)
-          location = node.casgn_type? ? :name : :expression
+          return if exact_constant?(constant_name, path)
           return if acceptable_higher_level_constant?(constant_name, path)
+          return if valid_constant_elsewhere?(node)
+
+          location = node.casgn_type? ? :name : :expression
 
           add_offense(node, location: location, message: message)
         end
@@ -64,11 +65,11 @@ module RuboCop
         end
 
         def exact_constant?(constant_name, path)
-          constant_name == Helpers.constant_name_from(path)
+          constant_name == constant_name_from(path)
         end
 
         def less_nested_constant_than_path_expects?(constant_name, path)
-          nesting_level(constant_name) < nesting_level(Helpers.constant_name_from(path))
+          nesting_level(constant_name) < nesting_level(constant_name_from(path))
         end
 
         def nesting_level(constant_name)
@@ -87,7 +88,9 @@ module RuboCop
           processed_source.path
         end
 
-        delegate :valid_namespace?, :valid_fully_qualified_constant?, to: Helpers
+        delegate :find_constants_in, :valid_namespace?,
+          :nested_constant_name_for, :constant_name_from,
+          :valid_fully_qualified_constant?, to: Helpers
       end
     end
   end

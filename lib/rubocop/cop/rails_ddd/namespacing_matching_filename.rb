@@ -10,20 +10,20 @@ module RuboCop
       #
       # @example
       #   # bad
-      #   app/concepts/some_folder/nesting.rb
-      #   # module IncorrectlyNamed; end
+      #   # app/concepts/some_folder/nesting.rb
+      #   module IncorrectlyNamed; end
       #
       #   # bad
-      #   app/concepts/some_folder/nesting.rb
-      #   # module SomeFolder; class IncorrectlyNamed; end; end
+      #   # app/concepts/some_folder/nesting.rb
+      #   module SomeFolder; class IncorrectlyNamed; end; end
       #
       #   # good
-      #   app/concepts/some_folder.rb
-      #   # module SomeFolder; end
+      #   # app/concepts/some_folder.rb
+      #   module SomeFolder; end
       #
       #   # good
-      #   app/concepts/some_folder/file.rb
-      #   # module SomeFolder; class File; end; end
+      #   # app/concepts/some_folder/file.rb
+      #   module SomeFolder; class File; end; end
       #
       class NamespacingMatchingFilename < Cop
         def on_module(node)

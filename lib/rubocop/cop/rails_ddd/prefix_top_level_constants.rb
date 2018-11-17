@@ -15,7 +15,7 @@ module RuboCop
         end
 
         def top_level_constant_definition?(node)
-          current_constant = NestedConstantName.for node: node
+          current_constant = RuboCop::RailsDdd::NestedConstantName.for node: node
 
           "::" + node&.to_a&.last&.to_s == current_constant
         end

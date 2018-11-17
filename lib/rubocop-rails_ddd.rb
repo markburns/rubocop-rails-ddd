@@ -6,9 +6,9 @@ require 'rubocop'
 
 require 'rubocop/rails_ddd/version'
 
-require 'rubocop/cop/rails_ddd/constant_path_determination.rb'
-require 'rubocop/cop/rails_ddd/constants_finder.rb'
-require 'rubocop/cop/rails_ddd/nested_constant_name.rb'
+require 'rubocop/rails_ddd/constant_path_determination.rb'
+require 'rubocop/rails_ddd/constants_finder.rb'
+require 'rubocop/rails_ddd/nested_constant_name.rb'
 
 # cops
 require 'rubocop/cop/rails_ddd/namespacing_matching_filename.rb'

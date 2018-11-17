@@ -4,17 +4,7 @@ require 'yaml'
 
 require 'rubocop'
 
-require 'rubocop/rails_ddd'
 require 'rubocop/rails_ddd/version'
-require 'rubocop/rails_ddd/inject'
-require 'rubocop/rails_ddd/top_level_describe'
-require 'rubocop/rails_ddd/wording'
-require 'rubocop/rails_ddd/language'
-require 'rubocop/rails_ddd/language/node_pattern'
-require 'rubocop/rails_ddd/concept'
-require 'rubocop/rails_ddd/example_group'
-
-RuboCop::RailsDdd::Inject.defaults!
 
 # cops
 require 'rubocop/cop/rails_ddd/namespacing_matching_filename.rb'
@@ -25,9 +15,7 @@ module RuboCop
   module Cop
     module Layout
       class ExtraSpacing # rubocop:disable Style/Documentation
-        def self.autocorrect_incompatible_with
-          [rails_ddd::AlignLeftLetBrace, rails_ddd::AlignRightLetBrace]
-        end
+        def self.autocorrect_incompatible_with; end
       end
     end
   end

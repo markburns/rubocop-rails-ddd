@@ -1,5 +1,6 @@
-# Placeholder - for Rails DDD rubocop Cop
+# Rails DDD rubocop Cop
 
+A cop that enforces the following conventions.
 
 # Rails and DDD (Domain Driven Design)
 

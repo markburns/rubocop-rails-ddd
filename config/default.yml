@@ -7,4 +7,4 @@ AllCops:
 RailsDdd/Namespacing:
   Description: Check that code conforms to namespacing standards
   Enabled: true
-  StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RailsDdd/Namespacing
+  StyleGuide: http://www.rubydoc.info/gems/rubocop-rails_ddd/RuboCop/Cop/RailsDdd/Namespacing

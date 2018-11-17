@@ -27,21 +27,15 @@ module RuboCop
       #
       class NamespacingMatchingFilename < Cop
         def on_module(node)
-          return unless concepts_folder?
-
-          constant_name = Helpers.nested_constant_name_for(node: node)
-          return if valid_namespace?(constant_name, path)
-          return if valid_constant_elsewhere?(node)
-
-          add_offense(node, location: :expression, message: message)
+          process(node)
         end
 
         def on_class(node)
-          return unless concepts_folder?
+          process(node)
+        end
 
-          return if valid_constant_elsewhere?(node)
-
-          add_offense(node, location: :expression, message: message)
+        def on_casgn(node)
+          process(node)
         end
 
         def valid_constant_elsewhere?(node)
@@ -50,6 +44,36 @@ module RuboCop
         end
 
         private
+
+        def process(node)
+          return unless concepts_folder?
+
+          constant_name = Helpers.nested_constant_name_for(node: node)
+
+          return if exact_constant? constant_name, path
+          return if valid_constant_elsewhere?(node)
+          location = node.casgn_type? ? :name : :expression
+          return if acceptable_higher_level_constant?(constant_name, path)
+
+          add_offense(node, location: location, message: message)
+        end
+
+        def acceptable_higher_level_constant?(constant_name, path)
+          valid_namespace?(constant_name, path) &&
+            less_nested_constant_than_path_expects?(constant_name, path)
+        end
+
+        def exact_constant?(constant_name, path)
+          constant_name == Helpers.constant_name_from(path)
+        end
+
+        def less_nested_constant_than_path_expects?(constant_name, path)
+          nesting_level(constant_name) < nesting_level(Helpers.constant_name_from(path))
+        end
+
+        def nesting_level(constant_name)
+          constant_name.split("::").length
+        end
 
         def message
           "Incorrect constant name for #{path}".freeze

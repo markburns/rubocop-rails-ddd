@@ -21,6 +21,10 @@ module RuboCop
         def self.valid_namespace?(const_name, path)
           ConstantPathDetermination.valid_namespace?(const_name, path)
         end
+
+        def self.constant_name_from(path)
+          Helpers::ConstantPathDetermination.expected_const_name(path)
+        end
       end
     end
   end

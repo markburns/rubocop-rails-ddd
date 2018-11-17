@@ -60,7 +60,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context 'non-matching nested module with valid module elsewhere' do
+  context 'non-matching nested module with matching module elsewhere' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile
@@ -141,6 +141,57 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
 
             class AcceptableYetUnpredictableClassName
             end
+          end
+        end
+      OUTPUT
+    end
+
+    it do
+      filename = 'app/concepts/' \
+                 'some_file/another_constant/yet_another_constant.rb'
+
+      expect_no_offenses(expected, filename)
+    end
+  end
+
+  context 'with various constant values in the file and no correct constant' do
+    let(:expected) do
+      <<-OUTPUT
+        module SomeFile
+          module AnotherConstant
+            VERY_LOUD = 11
+            ^^^^^^^^^ Incorrect constant name for app/concepts/some_file/another_constant/yet_another_constant.rb
+            This      = Class.new(StandardError)
+            ^^^^ Incorrect constant name for app/concepts/some_file/another_constant/yet_another_constant.rb
+            Tomato    = Struct.new(:num_seeds)
+            ^^^^^^ Incorrect constant name for app/concepts/some_file/another_constant/yet_another_constant.rb
+            Spinach   = Struct.new(:num_leaves)
+            ^^^^^^^ Incorrect constant name for app/concepts/some_file/another_constant/yet_another_constant.rb
+          end
+        end
+      OUTPUT
+    end
+
+    it do
+      filename = 'app/concepts/' \
+                 'some_file/another_constant/yet_another_constant.rb'
+
+      expect_offense(expected, filename)
+    end
+  end
+
+  context 'with various constant values in the file and the correct constant' do
+    let(:expected) do
+      <<-OUTPUT
+        module SomeFile
+          module AnotherConstant
+            class YetAnotherConstant
+            end
+
+            VERY_LOUD = 11
+            This      = Class.new(StandardError)
+            Tomato    = Struct.new(:num_seeds)
+            Spinach   = Struct.new(:num_leaves)
           end
         end
       OUTPUT

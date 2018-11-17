@@ -10,6 +10,8 @@ module RuboCop
             const_name =
               if node.class_type? || node.module_type?
                 node.children.first.const_name
+              elsif node.casgn_type?
+                node.node_parts[1]
               end
 
             const_chain << const_name

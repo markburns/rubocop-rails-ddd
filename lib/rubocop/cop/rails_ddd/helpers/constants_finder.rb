@@ -7,6 +7,7 @@ module RuboCop
         module ConstantsFinder
           def self.for(node:, constants: [], namespace: '')
             return constants unless node.is_a? RuboCop::AST::Node
+            return constants << "#{namespace}::#{node.node_parts[1]}" if node.casgn_type?
             return constants if node.type == :const
 
             if node.module_type? || node.class_type?

@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'parser/current'
 
 RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
   subject(:cop) { described_class.new(config) }
@@ -78,6 +77,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
       expect_no_offenses(expected, 'app/concepts/some_file/another_constant.rb')
     end
   end
+
   context 'nested again' do
     let(:expected) do
       <<-OUTPUT
@@ -97,16 +97,6 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
 
   context 'with an invalid class name in the file' do
     let(:source) { expected.gsub(/^\s*\^.*$/, '') }
-
-    let(:node) do
-      # example from http://www.rubydoc.info/gems/rubocop/RuboCop/AST/Builder
-      buffer = Parser::Source::Buffer.new('')
-      buffer.source = source
-
-      builder = RuboCop::AST::Builder.new
-      parser = Parser::CurrentRuby.new(builder)
-      parser.parse(buffer)
-    end
 
     let(:path) { 'app/concepts/some_file/another_constant/yet_another_constant.rb' }
 
@@ -159,6 +149,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     it do
       filename = 'app/concepts/' \
                  'some_file/another_constant/yet_another_constant.rb'
+
       expect_no_offenses(expected, filename)
     end
   end

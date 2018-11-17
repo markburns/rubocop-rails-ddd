@@ -29,7 +29,7 @@ module RuboCop
         def on_module(node)
           return unless concepts_folder?
 
-          constant_name = RuboCop::RailsDdd::NestedConstantName.for(node: node)
+          constant_name = Helpers.nested_constant_name_for(node: node)
           return if valid_namespace?(constant_name, path)
           return if valid_constant_elsewhere?(node)
 
@@ -45,7 +45,7 @@ module RuboCop
         end
 
         def valid_constant_elsewhere?(node)
-          constants = RuboCop::RailsDdd::ConstantsFinder.for(node: node.ancestors.last)
+          constants = Helpers.find_constants_in(node: node.ancestors.last)
           constants.any? { |c| valid_fully_qualified_constant?(c, path) }
         end
 
@@ -63,7 +63,7 @@ module RuboCop
           processed_source.path
         end
 
-        delegate :valid_namespace?, :valid_fully_qualified_constant?, to: RuboCop::RailsDdd::ConstantPathDetermination
+        delegate :valid_namespace?, :valid_fully_qualified_constant?, to: Helpers
       end
     end
   end

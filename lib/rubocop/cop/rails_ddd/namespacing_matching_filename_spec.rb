@@ -60,7 +60,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context 'invalid nested module with valid module elsewhere' do
+  context 'non-matching nested module with valid module elsewhere' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile

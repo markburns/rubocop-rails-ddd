@@ -2,7 +2,6 @@ require 'rubocop'
 require 'byebug'
 require 'rubocop/rspec/support'
 
-
 if ENV['CI']
   require 'simplecov'
   SimpleCov.start
@@ -11,7 +10,6 @@ end
 module SpecHelper
   ROOT = Pathname.new(__dir__).parent.freeze
 end
-
 
 spec_helper_glob = File.expand_path('{support,shared}/*.rb', __dir__)
 Dir.glob(spec_helper_glob).map(&method(:require))

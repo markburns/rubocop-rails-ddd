@@ -11,6 +11,10 @@ module RuboCop
         def nested_constants?(node)
           node.type == :const && node&.children&.first&.type == :const
         end
+
+        def top_level_constant?(node)
+          current_constant = NestedConstantName.for node: node
+        end
       end
     end
   end

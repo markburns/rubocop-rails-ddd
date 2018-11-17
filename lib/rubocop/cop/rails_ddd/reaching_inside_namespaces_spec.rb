@@ -2,14 +2,35 @@ require 'spec_helper'
 require 'parser/current'
 
 RSpec.describe RuboCop::Cop::RailsDdd::ReachingInsideNamespaces, :config do
+  let(:message) { "Don't reach inside other namespaces. Refactor to avoid this or provide a public aggregate root method." }
   subject(:cop) { described_class.new(config) }
+
+  context 'referring to a constant inside the current namespace' do
+    let(:expected) do
+      <<-OUTPUT
+        module Namespace
+          class AnotherClass
+          end
+        end
+
+        module Namespace
+          klass = AnotherClass
+        end
+      OUTPUT
+    end
+
+    it do
+      expect_no_offenses(expected, 'app/concepts/namespace.rb')
+    end
+  end
+
 
   context 'referring to a nested constant in another namespace' do
     let(:expected) do
       <<-OUTPUT
         module Namespace
           klass = ::AnotherNamespace::AnotherClass
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Don't reach inside other namespaces. Refactor to avoid this or provide a public aggregate root method.
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{message}
         end
       OUTPUT
     end
@@ -25,7 +46,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::ReachingInsideNamespaces, :config do
         module Namespace
           def self.a_method
             ::AnotherNamespace::AnotherClass.some_method
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ Don't reach inside other namespaces. Refactor to avoid this or provide a public aggregate root method.
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ #{message}
           end
         end
       OUTPUT

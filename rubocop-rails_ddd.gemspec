@@ -1,4 +1,4 @@
-$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift File.expand_path('lib', __dir__)
 require 'rubocop/rails_ddd/version'
 
 Gem::Specification.new do |spec|
@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
   spec.homepage = 'http://github.com/markburns/rubocop-rails_ddd'
   spec.authors = ['Mark Burns']
   spec.email = [
-    'markthedeveloper@gmail.com',
+    'markthedeveloper@gmail.com'
   ]
   spec.licenses = ['MIT']
 
@@ -30,8 +30,8 @@ Gem::Specification.new do |spec|
   spec.test_files = spec.files.grep(%r{^spec/})
   spec.extra_rdoc_files = ['MIT-LICENSE.md', 'README.md']
 
-  spec.add_runtime_dependency 'rubocop', '>= 0.51.0'
   spec.add_runtime_dependency 'rails', '>= 3'
+  spec.add_runtime_dependency 'rubocop', '>= 0.51.0'
 
   spec.add_development_dependency 'rake'
   spec.add_development_dependency 'rspec', '>= 3.4'

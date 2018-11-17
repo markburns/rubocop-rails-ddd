@@ -8,7 +8,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     [ruby, error].compact.map(&:chomp).join("\n") + "\n"
   end
 
-  context "with an incorrect filename" do
+  context 'with an incorrect filename' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile; end
@@ -21,7 +21,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context "with a correct filename" do
+  context 'with a correct filename' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile; end
@@ -33,7 +33,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context "nested" do
+  context 'nested' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile; class AnotherConstant; end; end
@@ -45,7 +45,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context "invalid nested module" do
+  context 'invalid nested module' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile
@@ -61,7 +61,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context "invalid nested module with valid module elsewhere" do
+  context 'invalid nested module with valid module elsewhere' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile
@@ -78,7 +78,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
       expect_no_offenses(expected, 'app/concepts/some_file/another_constant.rb')
     end
   end
-  context "nested again" do
+  context 'nested again' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile
@@ -95,7 +95,21 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
   end
 
-  context "with an invalid class name in the file" do
+  context 'with an invalid class name in the file' do
+    let(:source) { expected.gsub(/^\s*\^.*$/, '') }
+
+    let(:node) do
+      # example from http://www.rubydoc.info/gems/rubocop/RuboCop/AST/Builder
+      buffer = Parser::Source::Buffer.new('')
+      buffer.source = source
+
+      builder = RuboCop::AST::Builder.new
+      parser = Parser::CurrentRuby.new(builder)
+      parser.parse(buffer)
+    end
+
+    let(:path) { 'app/concepts/some_file/another_constant/yet_another_constant.rb' }
+
     let(:expected) do
       <<-OUTPUT
         module SomeFile
@@ -116,21 +130,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
       expect_offense(expected, path)
     end
 
-    let(:source) { expected.gsub(/^\s*\^.*$/, "") }
-
-    let(:node) do
-      # example from http://www.rubydoc.info/gems/rubocop/RuboCop/AST/Builder
-      buffer = Parser::Source::Buffer.new('')
-      buffer.source = source
-
-      builder = RuboCop::AST::Builder.new
-      parser = Parser::CurrentRuby.new(builder)
-      parser.parse(buffer)
-    end
-
-    let(:path) { 'app/concepts/some_file/another_constant/yet_another_constant.rb' }
-
-    describe "#valid_constant_elsewhere?" do
+    describe '#valid_constant_elsewhere?' do
       before do
         allow(cop).to receive(:path).and_return path
       end
@@ -141,59 +141,60 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
 
     describe described_class::ConstantPathDetermination do
-      let(:valid) { described_class.valid?(const_name, path) }
+      let(:valid) { described_class.valid_namespace?(const_name, path) }
 
-      context "with a top level constant" do
-        let(:const_name) { "::TopLevel" }
-        let(:path) { "app/concepts/top_level.rb" }
+      context 'with a top level constant' do
+        let(:const_name) { '::TopLevel' }
+        let(:path) { 'app/concepts/top_level.rb' }
+
         it do
           expect(valid).to be true
         end
       end
 
-      context "with a nested constant" do
-        let(:const_name) { "::TopLevel::Nested" }
-        let(:path) { "app/concepts/top_level/nested.rb" }
+      context 'with a nested constant' do
+        let(:const_name) { '::TopLevel::Nested' }
+        let(:path) { 'app/concepts/top_level/nested.rb' }
         it do
           expect(valid).to be true
         end
       end
 
-      context "a top level constant in a nested path" do
-        let(:const_name) { "::TopLevel" }
-        let(:path) { "app/concepts/top_level/nested.rb" }
+      context 'a top level constant in a nested path' do
+        let(:const_name) { '::TopLevel' }
+        let(:path) { 'app/concepts/top_level/nested.rb' }
         it do
           expect(valid).to be true
         end
       end
 
-      context "with nonsense constant name" do
-        let(:const_name) { "123" }
-        let(:path) { "app.rb" }
+      context 'with nonsense constant name' do
+        let(:const_name) { '123' }
+        let(:path) { 'app.rb' }
         it do
           expect(valid).to be false
         end
       end
 
-      context "with nonsense constant name matching the path" do
-        let(:const_name) { "123" }
-        let(:path) { "123.rb" }
+      context 'with nonsense constant name matching the path' do
+        let(:const_name) { '123' }
+        let(:path) { '123.rb' }
         it do
           expect(valid).to be false
         end
       end
 
-      context "an incorrect top level constant in a nested path" do
-        let(:const_name) { "::Wrong::Nested" }
-        let(:path) { "app/concepts/top_level/nested.rb" }
+      context 'an incorrect top level constant in a nested path' do
+        let(:const_name) { '::Wrong::Nested' }
+        let(:path) { 'app/concepts/top_level/nested.rb' }
         it do
           expect(valid).to be false
         end
       end
 
-      context "an incorrect nested constant" do
-        let(:const_name) { "::TopLevel::Wrong" }
-        let(:path) { "app/concepts/top_level/nested.rb" }
+      context 'an incorrect nested constant' do
+        let(:const_name) { '::TopLevel::Wrong' }
+        let(:path) { 'app/concepts/top_level/nested.rb' }
         it do
           expect(valid).to be false
         end
@@ -201,7 +202,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
 
     describe described_class::NestedConstantName do
-      context "with child class node" do
+      context 'with child class node' do
         let(:nested_node) { node.children.last.children.last }
         let(:constant) { described_class.for(node: nested_node) }
         let(:source) do
@@ -216,7 +217,7 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
         end
 
         it do
-          expect(constant).to eq "::Outer::Inner::SomeClass"
+          expect(constant).to eq '::Outer::Inner::SomeClass'
         end
       end
     end
@@ -226,14 +227,14 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
 
       it do
         expect(constants).to match_array [
-          "::SomeFile",
-          "::SomeFile::AnotherConstant",
-          "::SomeFile::AnotherConstant::IncorrectName",
-          "::SomeFile::AnotherConstant::AnotherWrongName",
+          '::SomeFile',
+          '::SomeFile::AnotherConstant',
+          '::SomeFile::AnotherConstant::IncorrectName',
+          '::SomeFile::AnotherConstant::AnotherWrongName'
         ]
       end
 
-      context "with complex example" do
+      context 'with complex example' do
         let(:source) do
           <<-RUBY
           class Egg
@@ -258,25 +259,25 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
                 end
               end
             end
-              RUBY
+          RUBY
         end
         it do
           expect(constants).to match_array [
-            "::Egg",
-            "::Dog",
-            "::Another",
-            "::Another::Nested",
-            "::Something",
-            "::Something::InsideMetaClass",
-            "::Something::This",
-            "::Something::This::That"
+            '::Egg',
+            '::Dog',
+            '::Another',
+            '::Another::Nested',
+            '::Something',
+            '::Something::InsideMetaClass',
+            '::Something::This',
+            '::Something::This::That'
           ]
         end
       end
     end
   end
 
-  context "with other constants in the file" do
+  context 'with other constants in the file' do
     let(:expected) do
       <<-OUTPUT
         module SomeFile
@@ -292,7 +293,9 @@ RSpec.describe RuboCop::Cop::RailsDdd::NamespacingMatchingFilename, :config do
     end
 
     it do
-      expect_no_offenses(expected, 'app/concepts/some_file/another_constant/yet_another_constant.rb')
+      filename = 'app/concepts/' \
+                 'some_file/another_constant/yet_another_constant.rb'
+      expect_no_offenses(expected, filename)
     end
   end
 end

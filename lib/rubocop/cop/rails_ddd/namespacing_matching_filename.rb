@@ -10,23 +10,27 @@ module RuboCop
       #
       # @example
       #   # bad
-      #   app/concepts/some_folder/nesting.rb # module IncorrectlyNamed; end
+      #   app/concepts/some_folder/nesting.rb
+      #   # module IncorrectlyNamed; end
       #
       #   # bad
-      #   app/concepts/some_folder/nesting.rb # module SomeFolder; class IncorrectlyNamed; end; end
+      #   app/concepts/some_folder/nesting.rb
+      #   # module SomeFolder; class IncorrectlyNamed; end; end
       #
       #   # good
-      #   app/concepts/some_folder.rb         # module SomeFolder; end
+      #   app/concepts/some_folder.rb
+      #   # module SomeFolder; end
       #
       #   # good
-      #   app/concepts/some_folder/file.rb    # module SomeFolder; class File; end; end
+      #   app/concepts/some_folder/file.rb
+      #   # module SomeFolder; class File; end; end
       #
       class NamespacingMatchingFilename < Cop
         def on_module(node)
           return unless concepts_folder?
 
           constant_name = NestedConstantName.for(node: node)
-          return if ConstantPathDetermination.valid?(constant_name, path)
+          return if valid_namespace?(constant_name, path)
           return if valid_constant_elsewhere?(node)
 
           add_offense(node, location: :expression, message: message)
@@ -42,7 +46,7 @@ module RuboCop
 
         def valid_constant_elsewhere?(node)
           constants = ConstantsFinder.for(node: node.ancestors.last)
-          constants.any?{|c| ConstantPathDetermination.valid_fully_qualified_constant?(c, path) }
+          constants.any? { |c| valid_fully_qualified_constant?(c, path) }
         end
 
         private
@@ -61,11 +65,12 @@ module RuboCop
 
         module NestedConstantName
           def self.for(node:, const_chain: [])
-            return "::" + const_chain.compact.reverse.join("::") if node.nil?
+            return '::' + const_chain.compact.reverse.join('::') if node.nil?
 
-            const_name = if node.class_type? || node.module_type?
-              node.children.first.const_name
-            end
+            const_name =
+              if node.class_type? || node.module_type?
+                node.children.first.const_name
+              end
 
             const_chain << const_name
 
@@ -74,7 +79,7 @@ module RuboCop
         end
 
         module ConstantsFinder
-          def self.for(node: node, constants: [], namespace: "")
+          def self.for(node:, constants: [], namespace: '')
             return constants unless node.is_a? RuboCop::AST::Node
             return constants if node.type == :const
 
@@ -92,12 +97,12 @@ module RuboCop
             constants.compact
           end
 
-          def self.for_node(node: node, namespace: nil)
+          def self.for_node(node:, namespace: nil)
             return nil unless node.is_a? RuboCop::AST::Node
             return nil if node.type == :const
 
             if node.module_type? || node.class_type?
-              [namespace, node.children.first.const_name].compact.join("::")
+              [namespace, node.children.first.const_name].compact.join('::')
             end
           end
         end
@@ -107,18 +112,20 @@ module RuboCop
             expected_const_name(path) == const_name
           end
 
-          def self.valid?(const_name, path)
+          def self.valid_namespace?(const_name, path)
             expected_const_name(path).starts_with?(const_name)
           end
 
           def self.expected_const_name(path)
-            "::" +
-              path.
-              gsub(%r{app/concepts/}, "").
-              gsub(%r{\.rb\z}, "").
-              camelize
+            '::' +
+              path
+              .gsub(%r{.*/?app/concepts/}, '')
+              .gsub(/\.rb\z/, '')
+              .camelize
           end
         end
+
+        delegate :valid_namespace?, :valid_fully_qualified_constant?, to: ConstantPathDetermination
       end
     end
   end

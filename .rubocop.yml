@@ -1,38 +1,11 @@
-require: rubocop-rspec
+require: rubocop-rails_ddd
 
 AllCops:
+  DisabledByDefault: true
   DisplayCopNames: true
   TargetRubyVersion: 2.2
 
-Metrics/BlockLength:
-  Exclude:
-    - rubocop-rspec.gemspec
-    - Rakefile
-    - '**/*.rake'
-    - spec/**/*.rb
 
-Naming/FileName:
-  Exclude:
-    - lib/rubocop-rspec.rb
-
-Layout/MultilineMethodCallIndentation:
-  EnforcedStyle: indented
-
-Layout/MultilineOperationIndentation:
-  EnforcedStyle: indented
-
-Lint/BooleanSymbol:
-  Exclude:
-    - lib/rubocop/cop/rspec/expect_actual.rb
-    - lib/rubocop/cop/rspec/focus.rb
-
-Lint/InterpolationCheck:
-  Exclude:
-    - spec/**/*.rb
-
-RSpec/ExampleLength:
-  Max: 19
-
-RSpec/DescribeClass:
+RailsDdd/NamespacingMatchingFilename:
   Exclude:
     - spec/project/**/*.rb
